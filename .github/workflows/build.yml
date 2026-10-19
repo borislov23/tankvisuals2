@@ -32,6 +32,13 @@ jobs:
       - name: Extract source archive
         run: unzip -q TankVisuals-1.0.0-source.zip
 
+      - name: Fix 1.21 RenderTickCounter API error
+        run: |
+          # Исправляем несовместимость RenderTickCounter в исходном коде
+          find TankVisuals/src/ -type f -name "*.java" -exec sed -i 's/RenderTickCounter/net.minecraft.client.render.RenderTickCounter/g' {} +
+          # Если там используется float вместо RenderTickCounter в лямбде HudRenderCallback, заменим метод
+          sed -i 's/(float tickDelta)/(net.minecraft.client.render.RenderTickCounter tickCounter)/g' TankVisuals/src/main/java/com/tankvisuals/TankVisualsClient.java || true
+
       - name: Build mod
         working-directory: TankVisuals
         run: gradle build --no-daemon
