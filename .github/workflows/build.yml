@@ -32,6 +32,12 @@ jobs:
       - name: Extract source archive
         run: unzip -q TankVisuals-1.0.0-source.zip
 
+      - name: Fix 1.21.4 HudRenderCallback Compatibility
+        working-directory: TankVisuals
+        run: |
+          sed -i 's/void renderHud(DrawContext context, float tickDelta)/void renderHud(DrawContext context, net.minecraft.client.render.RenderTickCounter tickCounter)/g' src/main/java/com/tankvisuals/TankVisualsClient.java
+          sed -i 's/void renderHud(DrawContext drawContext, float tickDelta)/void renderHud(DrawContext drawContext, net.minecraft.client.render.RenderTickCounter tickCounter)/g' src/main/java/com/tankvisuals/TankVisualsClient.java
+
       - name: Build mod
         working-directory: TankVisuals
         run: gradle build --no-daemon
