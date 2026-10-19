@@ -3,9 +3,9 @@ name: Build TankVisuals
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    paths:
+      - "TankVisuals-1.0.0-source.zip"
+      - ".github/workflows/build.yml"
 
 permissions:
   contents: read
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Download repository
         uses: actions/checkout@v4
 
       - name: Install Java 21
@@ -29,13 +29,17 @@ jobs:
         with:
           gradle-version: "8.11.1"
 
+      - name: Extract source archive
+        run: unzip -q TankVisuals-1.0.0-source.zip
+
       - name: Build mod
+        working-directory: TankVisuals
         run: gradle build --no-daemon
 
       - name: Upload Minecraft mod
         uses: actions/upload-artifact@v4
         with:
           name: TankVisuals-1.0.0
-          path: build/libs/tankvisuals-1.0.0.jar
+          path: TankVisuals/build/libs/tankvisuals-1.0.0.jar
           if-no-files-found: error
           retention-days: 14
